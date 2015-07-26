@@ -1,0 +1,176 @@
+\newglossaryentry{APU}
+{
+    name=APU,
+    description={Accelerated Processing Unit, an AMD effort to produce a single chip that integrates both a CPU and a GPU}
+}
+
+\newglossaryentry{accelerator}
+{
+    name=accelerator,
+    description={"Hardware device or capability that enables accelerated computation on data-parallel workloads'' \cite{Microsoft2013}, that works in conjunction with the CPU}. Also referred to as a ``coprocessor''
+}
+
+%\newglossaryentry{API}
+%{
+%    name=API,
+%    description={Application Programming Interface, set of functions related to each other that act as a building block for other programs}
+%}
+
+\newglossaryentry{core}
+{
+    name=core,
+    description={Hardware processing unit, capable of executing instructions read from a program}
+}
+
+\newglossaryentry{compute unit}
+{
+    name={compute unit},
+    description={In OpenCL, a work group executes on a compute unit, which is composed of one or more processing elements (cores) and local memory}
+}
+
+\newglossaryentry{data parallelism}
+{
+    name={data parallelism},
+    description={A form of parallelism concerned with partitioning data over many cores, usually simple to implement and scalable wth higher numbers of cores~\cite{tsuchiyama2010opencl}}
+}
+
+\newglossaryentry{distributed computing}
+{
+    name={distributed computing},
+    description={High-performance computing by communicating and coordinating between a considerable number of computers, using MIMD architectures}
+}
+
+\newglossaryentry{global work size}
+{
+    name={global work size},
+    description={The total number of work-items that will execute a kernel function (i.e. a function issued by a host, in the form of a command, to be executed by a device) in OpenCL}
+}
+
+\newglossaryentry{GPGPU}
+{
+    name={GPGPU},
+    description={General Purpose computing on Graphics Processing Units, the programming practice of using GPUs for computing not related with rendering of 3D graphics}
+}
+
+\newglossaryentry{heterogeneous}
+{
+    name={heterogeneous},
+    description={A heterogeneous system (or heterogeneous architecture) is one composed of different types of processors and accelerators with different technical specifications}
+}
+
+\newglossaryentry{HPC}
+{
+    name={HPC},
+    description={High-Performance Computing, a practice concerned with very efficient implementations of large scale computational problems}
+}
+
+\newglossaryentry{instruction-level parallelism}
+{
+    name={instruction-level parallelism},
+    description={A form of parallelism concerned with low level processor techniques for issuing instructions concurrently}
+}
+
+\newglossaryentry{kernel}
+{
+    name={kernel},
+    description={A small function that can be executed by a core}
+}
+
+\newglossaryentry{local work size}
+{
+    name={local work size},
+    description={The number, usually accompanied by the dimensions, of work-items that compose a work-group in OpenCL}
+}
+
+\newglossaryentry{MIMD}
+{
+    name={MIMD},
+    description={``Multiple Instruction, Multiple Data'', a class of architecture capable of coordinating between different cores to execute different instructions in parallel}
+}
+
+\newglossaryentry{memory latency}
+{
+    name={memory latency},
+    description={The time spent in data transfers and copies between different memory types, e.g. from RAM to CPU registers or to a dedicated accelerator memory}
+}
+
+\newglossaryentry{multi-core}
+{
+    name=multi-core,
+    description={Hardware component that integrates more than one core (processing unit) as part of its design and that is able to use them independently}
+}
+
+\newglossaryentry{NDRange}
+{
+    name=NDRange,
+    description={An n-dimensional index space that describes how many work-items were created to execute kernels in OpenCL}
+}
+
+\newglossaryentry{OpenCL device}
+{
+    name={OpenCL device},
+    description={In the context of OpenCL, a device is a collection of compute units.}
+}
+
+\newglossaryentry{PCIe}
+{
+    name={PCIe},
+    description={Peripheral Component Interconnect Express, a currently leading hardware interface for connecting additional accelerators to a computer}
+}
+
+\newglossaryentry{pipeline parallelism}
+{
+    name={pipeline parallelism},
+    description={A form of parallelism concerned with organising data streams and a series of tasks into a pipeline structure}
+}
+
+\newglossaryentry{processing element}
+{
+    name={processing element},
+    description={The elements that compose an OpenCL compute unit, which is part of a device}
+}
+
+\newglossaryentry{SIMD}
+{
+    name={SIMD},
+    description={``Single Instruction, Multiple Data'', a class of architecture capable of executing instructions on many data elements in parallel}
+}
+
+\newglossaryentry{shared memory}
+{
+    name={shared memory},
+    description={Architectures capable of sharing the same memory space between their multiple processors}
+}
+
+\newglossaryentry{task parallelism}
+{
+    name={task parallelism},
+    description={A form of parallelism concerned with partitioning (possibly different) operations and routines over many cores, usually requiring advanced load balancing techniques~\cite{tsuchiyama2010opencl}}
+}
+
+\newglossaryentry{thread}
+{
+    name=thread,
+    description={The minimal representation of a set of instructions that can be executed by a computer, and be handled by the operating system scheduler}
+}
+
+\newglossaryentry{vectorisation}
+{
+    name=vectorisation,
+    description={Vectorisation occurs when many elements of a vector are processed by one instruction of the processor concurrently}
+}
+
+\newglossaryentry{work-group}
+{
+    name={work-group},
+    description={A set of work-items mapped to the same compute unit in OpenCL, that are able to share resources (e.g. memory)}
+}
+
+\newglossaryentry{work-item}
+{
+    name={work-item},
+    description={An equivalent of a thread in OpenCL jargon}
+}
+
+
+%\newacronym{vpu}{VPU}{Vector Processing Unit}

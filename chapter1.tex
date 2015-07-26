@@ -1,0 +1,43 @@
+\chapter{Introduction -- CHANGES PENDING}
+\label{cha:intro}
+
+%\section{How to read this document}
+
+The design of microprocessor technology has hit several ``walls'' in recent decades ~\cite{Collange2013}~\cite{borkar1999design}~\cite{2_sutter_2015}. These limits occur when a specific component of the chip cannot be improved further in the next generations, because of cost or physical constraints. As a result, the paradigm for achieving performance changed and the industry turned to \gls{multi-core} architectures (i.e. hardware that integrates more than one \gls{core}) to provide power-efficient and scalable computers \cite{flynn2005microprocessor}.
+
+While CPU performance continues to be improved, an alternative is to use \glspl{accelerator}, i.e. additional hardware that, in addition to CPUs, can perform operations. These accelerators use more and simpler cores than CPUs and can better exploit fine-grained parallelism~\cite{borkar2007thousand}~\cite{Collange2013}.
+
+These efforts result in varied chip designs, with different number, frequency and types of cores. This gives rise to \gls{heterogeneous} systems, computers that are composed of distinct combinations of processor components. The problem is that performance is not portable across architectures. New models of chips and accelerators are continuously created by manufacturers. Each chip may only be programmable with specific programming languages. Creating new versions of programs for each architecture becomes unfeasible for programmers.
+
+The aim of this project is to evaluate and extend the work in \cite{dolbeau2013one}, which suggests a solution for the portability of performance. The idea is that good performance may be obtained across a range of heterogeneous architectures if the code is tuned so as not to fully exploit a particular architecture. Performance losses across heterogeneous systems are minimised, at the cost of not achieving ``peak'' performance on one architecture.
+
+The project will make use of several types of machines that are composed of different kinds of accelerators. Specifically, the hypothesis will be evaluated with three OpenCL-compatible architectures: an Intel 24-core multi-socket CPU, an Nvidia 2496-core GPU and an Intel Xeon Phi 60-core accelerator. The architectures chosen provide different performance characteristics and implementations of the OpenCL standard.
+
+% TODO
+
+Other alternatives will optionally be surveyed, e.g. using libraries that achieve performance portability for heterogeneous architectures, like ArrayFire~\cite{malcolm2012arrayfire}, or implementing auto-tuning approaches~\cite{ganapathi2009case} (which can automatically get good performance). This is optional since it is not known if the libraries will work with the platforms available for experimentation. Auto-tuning approaches may prove too complex to implement in the available time.\\
+
+\section{Aim}
+\label{sec:aim}
+
+Explore cost-effective (in terms of time and human effort) ways to exploit parallelism targeting heterogeneous architectures with the same code base.
+
+\section{Objectives}
+
+\begin{itemize}
+\item Understand performance characteristics in heterogeneous architectures.
+\item Provide implementations of an algorithm that exploit the performance of different architectures.
+\item Evaluate a version of an implementation of an algorithm, able to extract performance from heterogeneous architectures with no code changes, against other architecture-specific implementations.
+\item Evaluate if trading peak for generally good performance can achieve performance portability for heterogeneous architectures.
+
+\section{Structure of Dissertation}
+
+The following document is structured as suggested in the lecture notes of the COMP90990 course. Chapter~\ref{cha:back} presents a survey of relevant literature for the project. Current parallel hardware options are reviewed, along with available parallel programming models for creating suitable programs that can exploit these hardware options.
+
+Chapter~\ref{cha:methodology} explains the approach this project will take to try to obtain good performance from heterogeneous parallel architectures on a given program, without making changes to the source code of the program. This approach is based on the work done in~\cite{dolbeau2013one}, as mentioned in this introduction. The choice of the program to consider and the methods for evaluating the results obtained will be discussed in this chapter as well.
+
+All progress made as of time of writing on this project will be presented in Chapter~\ref{cha:exp1}, including some preliminary results from running existing versions of code that implement a chosen algorithm in some of the architectures available for experimentation.
+
+Chapter~\ref{cha:conclusion} serves as a conclusion to this report, summarising the key concepts defined and points made during this project.
+
+\end{itemize}

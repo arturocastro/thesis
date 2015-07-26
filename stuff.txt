@@ -1,0 +1,215 @@
+
+
+
+
+
+
+
+        
+
+
+banking                            
+blue                                
+
+                                  
+
+[CO]*6inl@r
+ & 
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+Arturo IsaiCastro Perpuli
+
+66 Grafton StreetM13 9NTManchester, UK
+[mobile]+44 07931 072503                   
+
+
+arturo.castrop@live.com                               
+careers.stackoverflow.com/ArthurChamz                         
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+Persevering and responsible Software Engineer that enjoys working with a systematic, methodical and agile approach to constructing quality solutions with real full-stack experience, with deep knowledge in data science, optimisation and problem solving.
+
+
+
+
+NationalityMexican
+
+Experience
+
+Nov 2013--Sep 2014Software EngineerAMI GE -  http://www.amige.comamige.comMonterrey, MexicoEmbedded real time system research and development.AMI is a GE branch, an international industrial automation and electrical drive systems company (600 employees).
+
+Digitarc PX3 Electrode Regulator, a real-time industrial grade C++ solution for electrical regulation and monitoring of steel furnaces, with web and desktop clients.
+  
+  Researched, planned, implemented and tested voltage flicker measurement feature, providing accurate metrics for security and business in accordance to IEEE standards with no negative impact on performance.
+  
+
+  Implemented digital signal processing, numeric analysis and statistical routines for processing voltage and current signals and obtaining information from them.
+  
+
+  Quickly wrote and tested low-level driver for an I/O signal handling board to meet estimated sales.
+  
+
+  Implemented parallel data acquisition module by creating multi-threaded routines, enhancing data resolution and allowing a more detailed analysis of signals, which increases security and protection of business while maintaining real-time performance.
+  
+
+  Applied refactoring to code by using design patterns and adding tests, reducing complexity and code size of critical modules, allowing for less training time devoted to new recruits and making changes simpler.
+  
+
+
+
+
+Jan 2013--Oct 2013Software Analyst InternFEMSA - http://www.femsa.com/enfemsa.comMonterrey, MexicoEnterprise application planning, design, development and support.FEMSA is the largest beverage company in Latin America, and the second-largest Coca-Cola bottler in the world (+100,000 employees). 
+
+Developed complete .NET web enterprise solution.
+  
+  User input, data analysis and reporting.
+
+  Accelerated core feature releases and bug fixes by migrating from Microsoft Access to WISA, and then to LAPP stack (Mono and PostgreSQL).
+  
+
+  Designed, modeled and operated application's database.
+  
+
+  System administration (network configuration, software packages).
+  
+
+  Increased department security by installing and configuring Linux virtual machine: SSH client authentication program (C++), HTTP and database servers.
+  
+  
+
+Developed module for Exchange server email messages retrieval, data parsing and storage, with automatic daily reports sent by email.
+End-user, face to face requirements gathering, analysis and support.
+
+
+
+
+Jan 2013--Jul 2013Software DeveloperCentro de Servicios en Informatica - http://www.uanl.mxuanl.mxSan Nicolas de los Garza, MexicoApplication development.A business unit from the Autonomous University of Nuevo Leon, dedicated to software engineering projects for internal and external clients (100 employees).
+
+Contributed to school's website interface and content design (fcfm.uanl.mx).
+Contributed to the development of modules for course registration application (Java).
+
+
+
+
+Sept 2014--PresentHornet Representative, First level technical support.University of Manchester - http://hornet.manchester.ac.uk/manchester.ac.ukManchester, United Kingdom
+
+The University of Manchester employs students to assist in networking support procedures (connectivity problems, computer troubleshooting). It's Tier 1 support for the campus network and end user counseling.
+
+Education
+2014--2015 (expected)MSc Advanced Computer Science: Artificial IntelligenceSchool of Computer Science, University of ManchesterFirst class honours (expected)Government-sponsored student learning about data science, parallel architectures, automated reasoning and optimisation.
+
+MSc project: researching portable performance for heterogeneous architectures (C, OpenMP, OpenCL, GPGPU, Xeon Phi).
+Implemented a Random Forest model for machine learning classification problems (MATLAB, Python SciKit).
+Developed a parallel version of Kruskal's Minimum Spanning Tree algorithm for graph and network flow problems.
+Created a parallel version of SOR relaxation algorithm for solving linear equation systems (Fortran, OpenMP and MPI).
+
+
+
+
+
+2009--2013BSc Computer Science: Software EngineeringUniversidad Autonoma de Nuevo Leon, Facultad de Ciencias Fisico Matematicas90 out of 100 (First class honours equivalence)Academic merit awards and scholarship, ACM contestant.
+
+Implemented a simulation of a steel furnace automation process using a real-time operative system and networking (C).
+
+  
+
+
+
+Since 2013Computer ScienceUdacityOnline open courses from various universities and companies.
+
+Parallel Computing: Patterns, considerations, Nvidia GPUs, CUDA (In progress).
+Software Debugging: Scientific approach, techniques, delta debugging (Completion certificate).
+
+
+
+
+
+Skills
+
+ProgrammingFluent in C and C++. Proficient in [net]C, [java]Java, [matlab]MATLAB, [python]Python, Javascript (including JQuery, [html]HTML, CSS and XSLT/XPath) and bash. Practical knowledge of [ruby]Ruby and R.
+ParallelismProficient in OpenMP and POSIX Threads. Good knowledge of MPI, CUDA and OpenCL.
+Database modeling and operationProficient in [psql]PostgreSQL. Some knowledge of [mysql]MySQL and [tsql]SQL Server.
+Platforms[ubuntu]Linux (5 years), [win]Windows (8 years), QNX (2 years).
+ToolsMATLAB (machine learning, digital signal processing and Parallel Computing Toolbox), machine learning (SciKit Learn), GCC, GNU Make, GDB, Visual Studio, Eclipse, Emacs, VIM, SVN, git, SSH, VirtualBox, , network programming, Boost, POCO libraries, Intel IPP.
+Knowledge and experienceProblem solving, parallel algorithms design for multi-core architectures, combinatorial optimization (NP-completeness, heuristics, evolutionary algorithms), machine learning models and algorithms (SMV, decision trees, random forests), dimension reduction and knowledge representation, data analysis, design and analysis of algorithms, data structures, OO design, networking.
+
+
+
+
+
+
+
+
+Languages
+SpanishNative.EnglishProfessional.FrenchWorking proficiency.
+
+
+
+References
+Eric Garza:          RD Manager at AMI GE   (mx.linkedin.com/pub/eric-garza/2/b0a/2)
+
+Fitzgerald Lopez: Project Manager at FEMSA (mx.linkedin.com/in/fitzlopez)
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+

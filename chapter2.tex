@@ -1,0 +1,333 @@
+\chapter{Background}
+\label{cha:back}
+
+This chapter presents a survey of relevant literature for the project. In Section 2.1, Parallelism is discussed, along with the variety of parallel architectures and specific hardware components that are available for programmers to use in order to write high-performing programs. In Section 2.2, the programming models and languages that may be used to write these parallel programs are reviewed, with a focus on compatibility and portability of performance. In Section 2.3, an argument for the importance of portable performance is proposed.
+
+\section{Parallelism and parallel architectures}
+
+In this section, relevant concepts of parallelism and parallel architectures will be surveyed. A list of hardware component types capable of performing parallelism is also discussed.
+
+The project discusses parallelism which, as explained in Chapter~\ref{cha:intro}, has become the norm when designing new hardware components for high performance. There are different kinds of parallelism that manifest when designing parallel programs. 
+
+Data parallelism and task parallelism are two prominent examples\cite{subhlok1993exploiting}. Data parallelism considers partitioning a data stream between different cores, after which each core can process its data partition in parallel. In contrast, task parallelism deals with how the actual processing operations and routines can be partitioned among different cores.
+
+Instruction-level parallelism refers to low-level techniques that are exploited by processors when executing programs, like out-of-order execution~\cite{hennessy2012computer}. While a viable source for performance, its relatively poor range of optimisations geared towards parallelism has prevented it from being the only method used for parallelism~\cite{goossens2013limits}.
+
+Pipeline parallelism is another alternative used by both hardware and software components, dealing with how the processing of a data stream can be broken up into several stages and put through a pipeline mechanism. As data keeps flowing into the process, parallelism may be achieved~\cite{gordon2006exploiting}. A graphical example comparing data, task and pipeline parallelism in a single hypothetical application is shown in Figure~\ref{f:parallelism}.
+
+\begin{figure}[!h]
+\begin{center}
+\centerline{\includegraphics[width=\columnwidth]{img/parallelism}}
+\caption[Example stream graph with parallelism axes.]{``Example stream graph with parallelism axes. Filters are denoted by green boxes and data-reorganization nodes are denoted by blue ovals. Pipeline parallelism is present between filters in the horizontal dimension, task parallelism in the vertical dimension, and data parallelism in the perceived depth dimension. Data parallelism is exploited only in IFFT. IFFT is stateless and can be data-parallelized by duplicating the filter (duplicates denoted by lighter boxes)'', as explained by ~\cite{1_gordon_thies_li_sung_zhang_wong_amarasinghe_2015}.}
+\label{f:parallelism}
+\end{center}
+\end{figure}
+
+Familiarity with the basics of computer architecture~\cite{hennessy2012computer} and Flynn's Taxonomy~\cite{flynn1966very}~\cite{tsuchiyama2010opencl} is assumed, which classifies parallel hardware according to its capabilities to execute parallel. In particular, concepts such as ``Single Instruction, Multiple Data'' (\gls{SIMD}) and ``Multiple Instruction, Multiple Data'' (\gls{MIMD}) are used throughout this document.
+
+SIMD architectures refer to chips that are able to execute a single instruction in parallel on more than one data element. This can be achieved by specific instruction support on a single core, or by employing hardware with multi-core capabilities, among other approaches. MIMD architectures are composed of two or more components that can coordinate among themselves to execute different instructions on different data. MIMD examples can also include multi-core processors, but more complex approaches like clusters of many computers connected by a network also fit into this category.
+
+Specific types of hardware components capable of processing will now be presented. These components are examples of parallel architectures that have been prominent in the history of parallel computing. 
+
+\subsection{CPU}
+
+CPUs have been at the forefront of the parallel hardware evolution, ever since major CPU manufacturers hit the ``power wall'' (i.e. the difficulty in dissipating heat from chips with high frequencies~\cite{flynn2005microprocessor}~\cite{2_sutter_2015}) in the early 2000's~\cite{flynn2005microprocessor}. At the same time, there is competition between specific CPU architectures from different vendors, each with their own characteristics and peculiarities that offer differences in terms of performance~\cite{Masoumzadeh2013}, e.g. the number and frequency of cores, the length of exploitable SIMD, etc. Even task-level parallelism is important in this regard, as some chips integrate cores with both low and high frequencies to provide further power savings in the interest of extending the battery life of mobile devices~\cite{zhu2013high}.
+
+\subsection{GPU}
+
+A Graphics Processing Unit (GPU) is an accelerator usually tasked with the rendering of 3D graphics, but also capable of general-purpose computing~\cite{Microsoft2013}. GPUs integrate many simple processing units that can be used in parallel for simple calculations. (e.g. basic arithmetic). The rendering of 3D graphics has its roots in linear algebra and the projections of 3D vectors in a 2D space~\cite{7_wikipedia_2015}. The algorithms for performing these projections are data-parallel and thus GPUs are used to cope with the performance needs of these projections~\cite{wu2011gpu}~\cite{8_wikipedia_2015}.
+
+It was around the same time that multi-core chips became the norm (in the early 2000s~\cite{flynn2005microprocessor}) that there were developments regarding the use of GPUs for general purpose computing, a practice referred to as \gls{GPGPU} \cite{nickolls2010gpu}. Just like the case of CPUs, there are different vendors and models of GPUs, each with their own set of specifications.
+
+Accelerators like GPUs are often connected through a bus interconnect in order to share data between the main memory (which shares some of its data with the CPU) and the device's own memory (used to share data with the processing units in the accelerator). However, data must eventually go through the main memory and the CPU for many critical operations. The time needed to transfer data from the main memory to the CPU and back (i.e. the main \gls{memory latency}) is faster than the memory latency from data transfers between accelerators and the main memory~\cite{daga2011efficacy}. This creates a bottleneck that limits the potential usefulness of accelerators~\cite{goddeke2007exploring} and reaffirms the importance of CPUs, in spite of their relative good parallel performance.
+
+In the mobile world, graphics have become important and devices often feature low-power GPUs~\cite{cheng2011using}. The inclusion of cameras provides further opportunities for GPGPU~\cite{wang2013accelerating}~\cite{rister2013fast}, making real-time computer vision and image processing applications a reality at reasonable power consumption levels which provides extended battery life.
+
+One development in GPU technology are Accelerated Processing Units ((\gls{APU}s). Initially developed by ATI, and then by AMD, it consists on a single chip that comprises both a CPU and a GPU on the same die, which provides less memory latency by eliminating the need of PCIe accesses~\cite{daga2011efficacy}. Since the Sandy Bridge architecture, Intel provides a very similar design in CPUs by incorporating Intel HD Graphics chips on the same die as well~\cite{yuffe2011fully}.
+
+APUs are very popular on modern CPU designs and on video game consoles because of their relative low power-consumption and memory latency~\cite{9_wikipedia_2015}, with newer developments providing the CPU and GPU components with the same memory address space, preventing unnecessary data transfers between themselves~\cite{10_wikipedia_2015}.
+
+\subsection{MIC}
+
+A new approach to building accelerators has been proposed by Intel in 2010, in the form of the Intel Many Integrated Code (Intel MIC) architecture. It is based on work on the cancelled Larrabee~\cite{seiler2008larrabee} GPU-like architecture by Intel, originally announced in 2008. The Larrabee would include characteristics of both GPUs (support for 3D graphics using DirectX and OpenGL) and CPUs (composed by x86 cores that would benefit from the x86 instruction set and cache coherency among all cores)~\cite{seiler2008larrabee}.
+
+The MIC architecture is composed of more and simpler x86-64 cores than a regular multi-core CPU. While the cores share many design aspects of a x86-64 CPU, they have important additions like hardware vector-processing extensions that increase its levels of parallelism~\cite{chrysos2014intel}. This several-core approach is similar to that of GPUs, but the fact that MIC architecture is composed of regular CPU-based cores makes it compatible with more programming models, as it will be confirmed in the next sections of this chapter.
+
+The current line of products based on the MIC architecture is called Xeon Phi. Since Xeon Phi accelerators are often coupled with high-end host CPUs, there is work in developing programming constructs for balancing tasks between both the host CPU and the Xeon Phi, i.e. frameworks that can offload computation tasks to the Xeon Phi as an accelerator, while still using the host CPU to work in parallel in the same tasks~\cite{dokulil2012efficient}.
+
+\subsection{Others}
+
+Other architectures of interest are the Field-Programmable Gate Array (FPGA) and the Cell processor. FPGAs can be described as chips reconfigurable circuits that can be programmed. As such, programmers can design circuits that can execute parallel programs very efficiently~\cite{singh2011implementing}. There is research in partial reconfiguration of FPGAs during runtime~\cite{koch2012partial}, which broadens the range of programs that may be executed in parallel by an these chips. Intel has stated that new CPUs will include an FPGA chip~\cite{1_anthony_2015}, which makes it relevant in the context of heterogeneous systems.
+
+In contrast, the Cell processor~\cite{gschwind2006synergistic}, developed by IBM, is composed of one main PowerPC CPU, and eight smaller processors (called ``Synergistic Processor Elements'') designed to exploit data parallelism with SIMD instructions, which are optimised for floating-point arithmetic~\cite{tsuchiyama2010opencl}. This architecture is considered relevant because it is a CPU-based architecture supported since 2006 by major hardware manufacturers.
+
+
+
+\section{Parallel programming models}
+
+Each of these architectures has their own compatible set of programming models, but they are all used at the present to perform High-Performance Computing (\gls{HPC}). They populate the most powerful computers~\cite{2_top500.org_2015}.
+
+In this section, a general survey of parallel programming models is made, considering the various architectures previously defined. Classifying these models in categories will provide an understanding of the trends that are popular among the designers of both hardware and software for HPC. The evolution of the hardware, as well as the evolution of the abstractions that spur when defining a new programming model, are core opportunities for the improvement of heterogeneous computing. This idea will be revisited near the end of this chapter. A diagram of this classification is shown in Figure~\ref{f:overview}.
+
+\begin{figure}[!h]
+\begin{center}
+\centerline{\includegraphics[width=4in]{img/overview}}
+\caption{Parallel programming models overview diagram.}
+\label{f:overview}
+\end{center}
+\end{figure}
+
+\subsection{Shared memory}
+
+Multithreading approaches exploit \gls{shared memory} architectures by optimally distributing the workload to different execution units called \glspl{thread}. A program creates threads when performing parallelism, which are sequences of instructions, and the system scheduler is responsible for assigning threads to the physical cores of the device where the program will run (usually with some user direction involved).
+
+Depending on the platform and the programming language used, thread affinity controls may be used to map specific threads to specific cores, making the scheduling process deterministic and giving the programmer better control to exploit and measure parallel performance.
+
+Knowledge of shared memory architectures and their performance considerations yields better results when writing multithreaded programs, as optimum performance is dependant on many factors related to the memory hierarchy~\cite{dagum1998openmp}. Multithreading has been associated with bugs because of this, since dealing with concurrency and synchronisation problems adds a layer of complexity to any program written with multithreading in mind.
+
+However, many languages and libraries have been created to minimise these disadvantages and multithreading has become a simpler activity. Key developments are described next.
+
+\subsubsection{OpenMP}
+
+Open Multi-Processing (OpenMP)~\cite{dagum1998openmp} is both a library and an extension to Fortran, C and C++ for writing parallel, thread-based programs for shared memory architectures, and supports accelerators as of version 4.0\cite{openmp13}. Originally designed for exploiting data parallelism over loops, task parallelism support was added later in version 3.0~\cite{tousimojarad2014comparison}.
+
+The OpenMP standard was created in 1997 by \textit{OpenMP Architecture Rating Board}, a consortium conformed of hardware and software vendors like Intel, AMD, Cray, IBM, HP, Nvidia, Texas Instruments, Red Hat, Oracle, etc. It supports popular Unix-like and Windows platforms.
+
+OpenMP has been popular for scientific HPC because it is possible to modify an existing Fortran or C/C++ program to exploit multi-core architectures and it is supported by many compilers~\cite{2_openmp.org_2015}. In comparison with native models such as POSIX threads\cite{mueller1993library}, OpenMP code can be shorter and more robust, without a negative impact on performance and with no changes to the application logic~\cite{kuhn2000openmp}.
+
+\subsubsection{Open Stream}
+
+OpenStream is a streaming programming language~\cite{pop2013openstream}, defined as an extension to OpenMP. It was designed to exploit pipeline parallelism, used to exploit parallel architectures processing streams of data. It functions as another tool to create parallel algorithms which behave differently from data or task parallelism. It is available as a custom version of GCC, which needs to be built from source.
+
+While there are no references in the literature of using OpenStream with a Xeon Phi accelerator, it would be possible because the Xeon Phi is a shared memory architecture. Further experiments would be needed to know if speedup is feasible, since both vectorisation and cache locality are vital to maximise the performance of the Xeon Phi accelerator\cite{7_software.intel.com_2014}.
+
+\subsubsection{Cilk Plus}
+
+Cilk Plus~\cite{robison2012parallel} is a programming language launched by Intel in 2009, defined by the same rules and semantics of the C/C++ languages, with extensions for parallel computing (in a similar fashion to OpenMP). It resulted as a combination of previous work done for the Cilk and Cilk++ languages.
+
+As a successor to Cilk~\cite{frigo1998implementation}, created in 1994, it shares the idea of a runtime providing task parallelism with a sophisticated dynamic scheduler using work stealing, along with an interface to exploit it by using the new ``spawn'' and ``sync'' keywords. The programmer writes code with these keywords, expressing that there exist opportunities for parallelism in certain parts of the code. The runtime will determine if it is efficient to execute those sections in parallel. Special profiling and debugging tools by Intel exist to understand how the runtime is affecting programs and understand the utilisation of the hardware~\cite{1_cilkplus_2015}.
+
+Cilk Plus also adds support for parallel for-loops and a special array notation that can exploit SIMD for data parallelism. The array notation has support for slices, as seen in higher-level languages like Python~\cite{2_wikipedia_2015}. Basic vector operations like sums, multiplications and copies can be expressed with standard operators~\cite{3_cilkplus_2012}. These two features, along with new keywords for vectorisation hints to the compiler, remove responsibility from the programmer and delegate it to the Cilk compiler and runtime.
+
+Compiler support for Cilk Plus is not as ample as OpenMP's, but Intel has provided support for GCC, LLVM/clang and the Intel C++ Compiler~\cite{3_wikipedia_2015}.
+
+\subsubsection{Intel TBB}
+
+Intel Threading Building Blocks (Intel TBB) is a C++ library that provides concurrent data structures, parallel algorithms and high-level routines for multithreading programs~\cite{tousimojarad2014comparison}. As a stand-alone library, it requires no additional compiler support and may be included in existing C++ programs, though some functionality may only be restricted to the processor model used and its capabilities.
+
+In order to incur as little overhead as possible, a lot of of the code is processed at compile time using the C++ template mechanism, thus providing efficient, low-overhead polymorphism during runtime for its concurrent collections.
+
+Other components for parallel programming include special memory allocation routines for dealing concurrency and false sharing, parallel looping and sorting, wrappers to synchronisation mechanisms and atomic instructions, and skeletons for writing more complex task parallelism.
+
+The ``Flow Graph'' routines also provide an abstraction for task parallelism using message passing between computing nodes, which may be used for \gls{distributed computing}~\cite{robison2012parallel} using MIMD architectures. It is an interface for specifying data dependencies and algorithms to execute in a program as a graph, so it can be naturally mapped to a distributed system.
+
+Another feature is a ``speculative locking'' mechanism introduces to Intel TBB, which can take advantage of a processor's support for  Transactional Synchronization Extensions instructions~\cite{yoo2013performance}. This may be an opportunity to achieve performance in critical pieces of code with a low level of concurrency.
+
+Lastly, other C++ libraries can use Intel TBB features for their own purposes. AMD's open source Bolt C++ library~\cite{10_amd_2015}, which provides facilities for CPU and GPU computing, optionally uses Intel TBB as a back-end for CPU parallel computing, in the event that a GPU was not found.
+
+
+%\subsection{Message passing}
+
+%\subsubsection{MPI}
+
+%The Message Passing Interface (MPI) is a library with a standard specification for writing parallel programs using the message-passing model. *** More stuff coming.
+
+%\subsubsection{Hadoop}
+
+\subsection{SIMD libraries}
+
+When dealing with array-based algorithms and operations, using the \gls{vectorisation} capabilities of current processors results in considerable speedup with relatively low effort (compared with multithreading) since many operations can be executed at the same time by using SIMD assembly-level instructions. Hardware vendors have supported the continuous development of these instructions for their newer CPU architectures~\cite{lomont2011introduction}~\cite{4_arm.com_2015}.
+
+\subsubsection{Boost.SIMD}
+
+A proposed addition to the popular Boost libraries for C++, Boost.SIMD~\cite{esterie2014boost} provides portable constructs to access SIMD processor instructions and exploit data parallelism. It works by abstracting a ``pack'' of primitive types and subsequent operations to it. As the pack is of a defined width, SIMD operations may be performed in parallel by the processor. It supports multiple CPU architectures and MIC accelerators~\cite{1_numscale.com_2014}.
+
+\subsubsection{Yeppp}
+
+The open source Yeppp library~\cite{4_yeppp.info_2015}, written using the PeachPy~\cite{dukhan2013peachpy} framework, provides specific SIMD versions of vector-processing functions (primitive operations like sums, multiplications, dot products, trigonometry, etc.) for CPU-based architectures, including the Xeon Phi accelerator. The functions are written as low-level assembly embedded in Python code, which is maintained and tuned for different CPUs and MIC accelerators. While the instructions are written using assembly languages, a Python interpreter can provide additional functionality for profiling and debugging code, as well as access to its standard library, making the creation of low-level programs more accessible.
+
+The Yeppp library has very specific functions, they can be used as building blocks for building more complex HPC applications efficiently, provided data dependencies are suitable and cache sizes are taken into account.
+
+It is similar in spirit to the commercial Intel Integrated Performance Primitives (Intel IPP)~\cite{5_software.intel.com_2015}, which is another collection of optimised vector-processing functions (albeit a more complete offer, with digital signal, image and speech processing functions, which can also make use of OpenMP internally to exploit multithreading and SIMD instructions at the same time). Intel IPP supports mainly Intel processors (and Xeon Phi accelerators) and their SIMD instructions, but Yeppp is designed to exploit SIMD instructions for x86 (Intel and AMD), ARM and MIPS processors. There exist official bindings for C, C++, Fortran, Java and C\#, while Intel IPP only has official bindings for C, but there are third party bindings for Python, Ruby and C\#, as well as support for calling the functions from Java.
+
+
+
+\subsection{Models for heterogeneous architectures}
+
+Models compatible with different kinds of architectures share the idea of mapping input and output data to the particular cores of the parallel hardware, either implicitly or explicitly. Implicitly mapped approaches are simpler to program with, but might not offer as much flexibility when tuning code for particular performance needs. In contrast, explicit mapping of data to cores requires more low-level knowledge of the underlying hardware (especially of the memory model) but provides greater flexibility.
+
+\subsubsection{OpenCL}
+
+The Open Computing Language (OpenCL) framework~\cite{stone2010opencl} provides a single interface to write kernels that can be executed in many kinds of processors and accelerators, like CPUs, GPUs, APUs, Xeon Phi, FPGAs and Digital Signal Processors. It provides execution, synchronisation and memory models for data parallelism. The standard was created by Apple in collaboration with AMD, Intel, Qualcomm, Nvidia and IBM. A proposal for an open standard was submitted to the Khronos Group (a consortium created by members from Apple, IBM, Intel, AMD, Altera, Nvidia and others~\cite{6_wikipedia_2015}, involved in overseeing the creation of other open standards like OpenGL, SPIR and Vulkan)~\cite{11_khronos.org_2015}, who released version 1.0 of the new OpenCL standard in 2008.
+
+OpenCL provides a low level interface to different hardware devices capable of performing computations. Based on C, it places the responsibility of handling memory and understanding the way each hardware piece works to the programmer. This makes it both powerful and complex in comparison to other approaches. 
+
+Since hardware evolves quickly and devices have different technical specifications, performance portability is not guaranteed and an OpenCL program is usually designed to exploit the parallel capabilities of a particular kind of processing device (e.g. GPUs) or a particular model of such devices.
+
+Hardware vendors have been supporting it in their products and the specification is maturing. There exist software development kits from Nvidia, AMD, Altera, Xilinx, Intel, ARM and other vendors~\cite{tsuchiyama2010opencl}~\cite{6_wikipedia_2015}~\cite{tsuchiyama2010opencl}~\cite{singh2011implementing}. It is used both as a complete solution and as an intermediate language for other languages or models, as described in other approaches in this section.
+
+OpenCL abstracts many concepts that can be mapped into different architectures, and provides a framework for manipulating these concepts and building programs that can then be executed in very different architectures. One important part of the OpenCL paradigm is the execution model, described in detail in~\cite{khronos44opencl}. It differentiates between \textit{host programs} (written in C, C++ or any other language with a binding to OpenCL, and compiled by the host) and \textit{kernels} (written in OpenCL C and compiled on the device). In a host program, a context and a command queue are created, with which commands can be issued from the host to the device (Figure~\ref{f:enqueue}). Commands include memory transfers, memory partitioning, kernel executions and synchronisation.
+
+\begin{figure}[!h]
+\begin{center}
+\centerline{\includegraphics{img/enqueue}}
+\caption[OpenCL Command queues as issued by the host and carried out by the devices.]{OpenCL Command queues as issued by the host and carried out by the devices~\cite{tsuchiyama2010opencl}.}
+\label{f:enqueue}
+\end{center}
+\end{figure}
+
+When the host program schedules a kernel execution, one or more \textit{\glspl{work-item}} are created and each execute the kernel once. Work-items are mapped into a n-dimensional range index space, called \textit{\gls{NDRange}}. This index space dictates how many work-items are created, i.e. the \textit{\gls{global work size}} of the command. Each work-item is issued a global ID number according to its position in the NDRange. With this ID number, work-items may be mapped to different sections of input and output data. 
+
+Work-items are then organised in \textit{\glspl{work-group}}, which are mapped to the NDRange. The size of the dimensions of each work-group can be specified, which will determine the number of work-groups to create, i.e. the \textit{\gls{local work size}}. Figure~\ref{f:work2d} illustrates a simplistic example using two dimensions.
+
+\begin{figure}[!h]
+\begin{center}
+\centerline{\includegraphics{img/work2d}}
+\caption[Example of an OpenCL 2D-NDRange and its ID numbering.]{Example of an OpenCL 2D-NDRange and its ID numbering~\cite{tsuchiyama2010opencl}.}
+\label{f:work2d}
+\end{center}
+\end{figure}
+
+Each created work-group is mapped to a specific ``compute unit'', a concept that varies depending on the device. Just as each work-group is N-dimensional, each compute unit is also composed of one or more ``\glspl{processing element}'' (or PEs), which are the hardware resources that execute the actual kernels. Figure~\ref{f:hostdev} shows the relationship between these concepts.
+
+\begin{figure}[!h]
+\begin{center}
+\centerline{\includegraphics[width=4in]{img/hostdev}}
+\caption[OpenCL host and device abstraction.]{OpenCL host and device abstraction~\cite{gaster2012heterogeneous}. A ``PE'' refers to a Processing Element. A single host may access and issue commands to many devices.}
+\label{f:hostdev}
+\end{center}
+\end{figure}
+
+Some concepts can be mapped directly to concepts appearing in the CUDA programming language (surveyed later in this chapter), e.g. OpenCL hosts are similar to OpenCL devices, OpenCL work-items are similar to CUDA threads, and OpenCL work-groups are similar to CUDA thread blocks~\cite{7_amd_2011}. Furthermore, the memory model is similar and the synchronisation guarantees are the same, etc~\cite{7_amd_2011}. Nevertheless, some effort of rewriting significant portions of code is still needed when porting between CUDA and OpenCL. There are no performance differences between these two languages when code is written carefully~\cite{fang2011comprehensive}.
+
+%*** Different things from CUDA... 
+%AMD COMPATIBLE
+
+Because OpenCL is compatible with many devices, achieving good performance requires knowledge of the underlying hardware, as well as insights into how an OpenCL implementation interfaces with said hardware. Many low-level details, like memory transfers, are delegated to the programmer~\cite{augonnet2011starpu}. Each vendor usually publishes programming guides and articles for their specific devices, e.g. for Altera for FPGAs~\cite{singh2011implementing}, or Intel for the Xeon Phi~\cite{7_software.intel.com_2014}. Thus, there are many considerations to take into account when programming HPC with OpenCL, regardless of the device.
+
+%*** Stuff about Xeon Phi
+
+The most recent version of the OpenCL standard, version 2.1 released in 2015, adds support for some C++ features. OpenCL has third party bindings for Java, Python, the .NET platform languages and Javascript. The Javascript binding, the WebCL standard~\cite{aarnio2014webcl}, is of special interest since it will allow web applications to exploit parallel architectures on the client-side, extending the range of applications that might become available to users inside a web browser~\cite{herhut2012parallel}.
+
+\subsubsection{OpenACC}
+
+Open Accelerators (OpenACC)~\cite{Group2013} is language extension for Fotran, C and C++, similar to OpenMP, with a focus on interfacing with accelerators. It was created by Nvidia, Cray, CAPS and PGI, and aims at providing a simple interface to exploit data parallelism on accelerators in existing Fortran, C and C++ programs.
+
+At this time, OpenACC compiler support is poorer than OpenMP's. The GCC compiler has preliminary support for OpenACC 2.0 since version 5.0, but there is no current support for OpenACC in clang, or in the Intel C++ or Fortran Compilers~\cite{4_openacc.org_2015}.
+
+\subsubsection{C++ AMP}
+
+C++ Accelerated Massive Parallelism (C++ AMP) is an extension~\cite{Microsoft2013} to the C++ language to support parallel computing on both CPUs and GPUs, providing constructs for creating algorithms from parallel loops using anonymous functions that map to accelerators. Data distribution among cores (whether they are CPU or GPU cores) is done automatically. It was created by Microsoft in 2012.
+
+Users can specify which accelerator to use \textit{a priori}. If no accelerator is specified C++ AMP will choose a suitable one provided it can detect it. If no accelerator was detected, it will fall back to use the host CPU (in a multi-core fashion if supported) and use SIMD instructions instead, if supported by the processor.
+
+While historically available for Microsoft technology stack (Visual C++ and Direct3D), there exist two clang/LLVM implementations, one effort by Intel~\cite{Sharlet2012} and another open source effort by AMD~\cite{8_blogs.msdn.com_2015}~\cite{9_bitbucket.org_2015} that compiles code to OpenCL, providing cross-platform usability and support for a wider range of GPUs and AMD APUs. The AMD implementation also has support for the newer SPIR intermediate language (previously mentioned in the OpenCL section).
+
+There is currently no information regarding support for MIC accelerators, limiting its use in pursuing performance portability. Since the clang/LLVM version compiles to OpenCL, supporting this and other accelerators is theoretically sound.
+
+\subsubsection{ArrayFire}
+
+ArrayFire~\cite{malcolm2012arrayfire} is a C++ library that provides several routines for data parallelism in CPUs, GPUs, APUs and MIC accelerators, with no extra support needed from a compiler. Originally a commercial offering from AccelerEyes, it was released as an open source project in late 2014~\cite{5_arrayfire_2014}.
+
+ArrayFire approaches the portable performance problem directly, supporting as many different devices and tuning its library functions for optimum performance. It offers binary installers, but the library may be built from source for different platforms by selecting which components and kernel versions will be compiled (e.g. it will not compile CUDA versions of the kernels if there is not a CUDA SDK present).
+
+The ArrayFire \glspl{kernel} are implemented in CUDA, OpenCL and C++ to support many devices. C++ template meta-programming techniques and a Just-In-Time compilation approach provide fusing of kernels to minimise synchronisation and communication overheads.
+
+
+\subsection{Others}
+
+Programming models not fitting into one of the previously defined categories will be described next. This other interesting lines of research in the same vein are frameworks like StarPU~\cite{augonnet2011starpu}, auto-tuning optimisation approaches like the ATLAS library~\cite{whaley2001automated}, machine learning methods~\cite{ganapathi2009case} and parallel compilers like the Gung Ho project~\cite{ford2013}.
+
+\subsubsection{CUDA}
+
+The Compute Unified Device Architecture (CUDA) platform~\cite{3_nvidia.com_2015} provides a programming language based on C to write programs that exploit data parallelism on GPU accelerators made by Nvidia in 2007. It was one of the first platforms to give a general purpose interface to developers without the need to interface or have knowledge of the original purpose of the GPU hardware, i.e. graphics processing.
+
+It still requires the programmer to learn the specific execution, synchronisation and memory models provided by CUDA and to understand the technical specifications of the accelerator in detail. The programming model itself deals with memory hierarchy and patters for efficient memory access. It does not guarantee performance portability as models of Nvidia GPUs differ with every new generation~\cite{6_developer.nvidia.com_2015}.
+
+%Designed for data parallelism, it is not immediately useful for \gls{task parallelism} (((or fine-grained parallelism? a reference is needed here))).
+
+The CUDA platform is reviewed in this section because of its similarity with OpenCL and its historical niche on the creation of new parallel programming models. It has influenced other programming models like OpenCL (surveyed in this section) and can serve as an intermediate language for other, more complex parallel computing approaches~\cite{malcolm2012arrayfire}~\cite{enmyren2010skepu}.
+
+There is overlapping functionality between CUDA and OpenCL, since both may be used to create programs for GPU accelerators and because of the similarity of their programming models. However, there have not been found significant differences between their performance~\cite{fang2011comprehensive}.
+
+The CUDA development tools provided by Nvidia are available for different operating systems. The CUDA C/C++ compiler is written over the LLVM compiler infrastructure. There exists an official Fortran version of the language that integrates the CUDA syntax as a Fortran extension. The compiler for this language is provided by the PGI Group. There also exist third party bindings to many languages, like Java, Python, Perl, Ruby, R, Lua, Haskell, Mathematica, MATLAB and the .NET platform languages~\cite{5_wikipedia_2015}.
+
+\subsubsection{StarPU}
+
+The StarPU platform~\cite{augonnet2011starpu} delivers a framework for writing programs that can be executed on heterogeneous architectures. It provides a runtime capable of scheduling user-defined tasks on different pieces of hardware, by using the native libraries for copying data from the processor to the accelerators and scheduling routines to be executed in those accelerators. StarPU exposes a library that abstracts these different native libraries for scheduling, and that is also capable of using different pre-defined or custom-defined scheduling configurations (i.e. greedy or balanced approaches w.r.t. the size of the tasks to execute).
+
+The StarPU project makes an effort to solve the problem presented in this Dissertation, supporting heterogeneous computing on many different processors and accelerators, including CPUs, Cell, GPUs and MICs. It is able to schedule tasks and express dependencies between them, providing a framework to exploit the performance of multiple processors and accelerators. It also has message-passing capabilities to exploit many multi-core processors and/or accelerators at the same time.
+
+\subsubsection{ATLAS, PLASMA and MAGMA}
+
+Basic Linear Algebra Subprograms (BLAS) is a specification for a low-level, high-performance linear algebra functions and routines~\cite{15_wikipedia_2015}, over which many different applications and libraries have been created, e.g. LAPACK~\cite{anderson1990lapack}. The multiple applications of the BLAS specification makes it a popular target for research in efficient implementations, which also spans research in very different methods of obtaining performance from distinct types of architectures. Popular implementations include the Intel MKL, AMD's ACML, cuBLAS, clBLAS and OpenBLAS~\cite{15_wikipedia_2015}.
+
+Other key projects that potentially could target heterogeneous architectures comprise the ATLAS, MAGMA and PLASMA projects. The Automatically Tuned Linear Algebra Software (ATLAS) project makes it possible to create customised versions of BLAS libraries for a particular architecture automatically~\cite{whaley2001automated}. Generating the implementation may take up to hours because of the necessary search for the optimal configuration, which will strive to optimise cache utilisation and other performance factors. While it currently supports CPU-based optimisations, the optimisation idea feels general enough so that it might be used for heterogeneous architectures in the future.
+
+The MAGMA and PLASMA libraries implement BLAS and a part of LAPACK in a different manner. PLASMA is compatible with CPU-based architectures and focuses on performance on high numbers of cores by allowing fine-grained parallelism on different stage of the functions~\cite{agullo2009numerical}. MAGMA is capable of offloading the computations to different kinds of accelerators, like GPUs~\cite{agullo2009numerical} and MICs~\cite{dongarra2013portable}. It exploits the higher parallelism of these accelerators and minimises their higher memory latency costs (as described earlier in this chapter).
+
+The MAGMA and PLASMA projects achieve performance for heterogeneous architectures by directly coding different routines and maximising their performance for specific hardware. Since BLAS and LAPACK serve as building blocks for different kinds of applications, aiming to provide high-performance implementations of these routines that feature performance portability is a relevant effort.
+
+\subsubsection{Gung Ho project}
+
+Gung Ho is an on-going project by the University of Manchester, the Imperial College London and other institutions, in collaboration with the Met Office and the National Environment Research Council (NERC)~\cite{ford2013}. The premise involves separating the work of writing and executing parallel algorithms among different layers. There are modules for the hardware infrastructure, as well as a driver module that controls the execution of the parallel algorithms, which are encapsulated in ``models''.
+
+A model consists of three different layers. The highest-level layer contains the application-domain algorithms that are written by the programmer, with no required knowledge of the hardware details or the parallelisation of the code. The lowest-level layer contains the kernels that execute the numerical routines and achieve the results expected from the algorithm layer.
+
+The parallelisation occurs in the middle-layer, called the PSy layer. It maps the algorithms written in the high-level layer to the kernels in the low-level layer. It interfaces with the hardware infrastructure to choose the best-performing kernels that can execute the algorithms written, in accordance with the current hardware and using a suitable (and available) parallel programming model, e.g. OpenMP or OpenACC. This interactions between layers appear in Figure~\ref{f:gung}.
+
+\begin{figure}[!h]
+\begin{center}
+\centerline{\includegraphics[width=4in]{img/gung}}
+\caption[The Gung Ho project approach to abstracting parallelism.]{The Gung Ho project approach to abstracting parallelism, where the arrows show the direction in which data and control flows between connected layers~\cite{ford2013}.}
+\label{f:gung}
+\end{center}
+\end{figure}
+
+There is recent work in automatically generating the code in the PSy layer. The PSyclone module is a parallel compiler for this layer, able to map the algorithm and kernel layers with some added optimisations~\cite{9_puma.nerc.ac.uk_2015}.
+
+The Gung Ho project serves as an original inspiration for this currently presented Dissertation. Other Dissertation projects in the Advanced Processor Technologies group of the University of Manchester work directly on it. As reference, a similar ideology for abstracting parallelism may be found in~\cite{Kelly}.
+
+% TODO uo!?
+
+%\subsubsection{Unified Parallel C}
+
+%Some stuff.
+
+\subsubsection{Machine learning methods}
+
+
+
+\section{The case for performance portability}
+
+\subsection{Why heterogeneous architectures?}
+
+*** Different hardware is good for different things, multi-core scaling in different devices and reaffirm the importance of parallelism, expose other research areas like big.LITTLE ***
+
+~\cite{daga2011efficacy}
+~\cite{zhu2013high}
+~\cite{AMD2011}
+
+\subsection{Classification of programming models}
+
+In this section, a classification of the programming models and languages surveyed is proposed, along with their summarised characteristics in terms of performance portability. Table~\ref{t:portability} shows this classification.
+
+\begin{table}[!h]
+\begin{center}
+\centerline{\includegraphics[width=\columnwidth]{img/portability}}
+\caption{Performance portability in parallel programming languages, models and other parallel approaches.}
+\label{t:portability}
+\end{center}
+\end{table}
+
+Thinking about hardware, many types of parallel hardware are bound to be mixed together to create heterogeneous systems. Other hardware choices like the Cell processor have not been popular, which means that programs specifically tuned to exploit their performance, along with platform-specific programming models or languages, may become obsolete in the future and extra work will be necessary to port these efforts to more suitable platforms.
+
+From the hardware described, in relation with the compatibility of the programming models. Give the popularity of GPU accelerators, specially on mobile devices, it is important blah blah
+2
+The production of new programming languages and models, specially those that are able to exploit parallelism, % TODO explain why it might be complex!
+
+OpenCL solved the code portability problem that existed between different types of architectures. While this was a step forward, the portability of performance is an important feature to pursue in a programming model, given the variety of heterogeneous architectures.
+
+\section{Summary}
+
+The information presented in this chapter is useful to understand why performance portability is a subject worth researching. The wide variety of parallel architectures, parallel hardware and their programming models and languages means extra effort for programmers interested in HPC. Some approaches that already deal with performance portability for heterogeneous architectures have been explained and will be evaluated in the remainder of this Dissertation, as discussed in the next chapter.
